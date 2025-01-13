@@ -1,0 +1,166 @@
+version: '3.8'
+
+services:
+  # Database Services
+  postgres:
+    image: postgres:15
+    container_name: cdn-postgres
+    environment:
+      POSTGRES_DB: cdn_main
+      POSTGRES_USER: cdn_user
+      POSTGRES_PASSWORD: cdn_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - cdn-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: cdn-redis
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - cdn-network
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile
+    container_name: cdn-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=postgres
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - cdn-network
+
+  # Microservices
+  content-service:
+    build:
+      context: ./backend/content-service
+      dockerfile: Dockerfile
+    container_name: cdn-content-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=postgres
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - cdn-network
+
+  user-service:
+    build:
+      context: ./backend/user-service
+      dockerfile: Dockerfile
+    container_name: cdn-user-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=postgres
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - cdn-network
+
+  analytics-service:
+    build:
+      context: ./backend/analytics-service
+      dockerfile: Dockerfile
+    container_name: cdn-analytics-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=postgres
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - cdn-network
+
+  notification-service:
+    build:
+      context: ./backend/notification-service
+      dockerfile: Dockerfile
+    container_name: cdn-notification-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=postgres
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - cdn-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cdn-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_BASE_URL=http://api-gateway:8080
+    depends_on:
+      - api-gateway
+    networks:
+      - cdn-network
+
+  # Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: cdn-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - cdn-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: cdn-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - cdn-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  cdn-network:
+    driver: bridge 

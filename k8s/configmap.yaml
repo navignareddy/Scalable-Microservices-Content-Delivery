@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cdn-config
+  namespace: cdn-system
+data:
+  # Database Configuration
+  POSTGRES_HOST: "postgres-service"
+  POSTGRES_DB: "cdn_main"
+  POSTGRES_USER: "cdn_user"
+  
+  # Redis Configuration
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  
+  # Application Configuration
+  SPRING_PROFILES_ACTIVE: "kubernetes"
+  
+  # AWS Configuration (if using S3)
+  AWS_REGION: "us-east-1"
+  AWS_S3_BUCKET: "cdn-content-bucket"
+  
+  # Storage Configuration
+  STORAGE_TYPE: "local"
+  LOCAL_STORAGE_PATH: "/app/uploads"
+  
+  # JWT Configuration
+  JWT_EXPIRATION: "86400000" 

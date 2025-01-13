@@ -1,0 +1,53 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # API Gateway
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['api-gateway:8080']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+
+  # Content Service
+  - job_name: 'content-service'
+    static_configs:
+      - targets: ['content-service:8081']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+
+  # User Service
+  - job_name: 'user-service'
+    static_configs:
+      - targets: ['user-service:8082']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+
+  # Analytics Service
+  - job_name: 'analytics-service'
+    static_configs:
+      - targets: ['analytics-service:8083']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+
+  # Notification Service
+  - job_name: 'notification-service'
+    static_configs:
+      - targets: ['notification-service:8084']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter (if we add it later)
+  # - job_name: 'node-exporter'
+  #   static_configs:
+  #     - targets: ['node-exporter:9100'] 

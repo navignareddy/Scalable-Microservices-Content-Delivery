@@ -1,0 +1,88 @@
+# CDN System API Tests
+# Use with REST Client extension in VS Code or similar tools
+
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+### Health Check - API Gateway
+GET {{baseUrl}}/actuator/health
+
+### Register new user
+POST {{baseUrl}}/api/v1/auth/register
+Content-Type: {{contentType}}
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "password123",
+  "firstName": "Test",
+  "lastName": "User"
+}
+
+### Login user
+POST {{baseUrl}}/api/v1/auth/login
+Content-Type: {{contentType}}
+
+{
+  "username": "testuser",
+  "password": "password123"
+}
+
+### Get user profile (requires authentication)
+GET {{baseUrl}}/api/v1/users/profile
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Upload content (multipart form data)
+POST {{baseUrl}}/api/v1/content/upload
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="test.txt"
+Content-Type: text/plain
+
+This is a test file content
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="title"
+
+Test Document
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+A test document for the CDN system
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="contentType"
+
+document
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="userId"
+
+1
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="isPublic"
+
+true
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Get all content
+GET {{baseUrl}}/api/v1/content?page=0&size=10
+
+### Get content by ID
+GET {{baseUrl}}/api/v1/content/1
+
+### Search content
+GET {{baseUrl}}/api/v1/content/search?query=test&page=0&size=10
+
+### Get popular content
+GET {{baseUrl}}/api/v1/content/popular?limit=5
+
+### Get recent content  
+GET {{baseUrl}}/api/v1/content/recent?limit=5
+
+### Get analytics overview
+GET {{baseUrl}}/api/v1/analytics/overview
+
+### Get content analytics
+GET {{baseUrl}}/api/v1/analytics/content?startDate=2025-01-01&endDate=2025-01-31
+
+### Get system metrics
+GET {{baseUrl}}/api/v1/analytics/metrics 
