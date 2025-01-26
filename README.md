@@ -1,4 +1,4 @@
-# 🚀 Scalable Content Delivery System
+# Scalable Content Delivery System
 
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Java](https://img.shields.io/badge/Java-17-orange.svg)
@@ -9,7 +9,7 @@
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-green.svg)
 ![AWS](https://img.shields.io/badge/AWS-S3%20Integration-orange.svg)
 
-> **🎓 Individual Assignment Project** - A production-ready, enterprise-grade distributed content delivery system demonstrating advanced microservices architecture, cloud-native development, and full-stack engineering excellence.
+> **Individual Assignment Project** - A production-ready, enterprise-grade distributed content delivery system demonstrating advanced microservices architecture, cloud-native development, and full-stack engineering excellence.
 
 **Developed by: Navigna Reddy** | **Focus: Scalable Microservices Architecture & Cloud Engineering**
 
